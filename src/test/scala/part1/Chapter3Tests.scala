@@ -10,13 +10,13 @@ class Chapter3Tests extends AnyFunSpec {
     import Chapter3._
 
     it("should output 3") {
-      val x = List(1, 2, 3, 4, 5) match {
+      assert((List(1, 2, 3, 4, 5) match {
         case Cons(x, Cons(2, Cons(4, _)))          => x
         case Nil                                   => 42
         case Cons(x, Cons(y, Cons(3, Cons(4, _)))) => x + y
         case Cons(h, t)                            => h + sum(t)
         case _                                     => 101
-      }
+      }) == 3)
     }
   }
 
@@ -73,7 +73,7 @@ class Chapter3Tests extends AnyFunSpec {
 
     describe("ex 3.6 init") {
       it("takes all but last last element of the list") {
-        assert(init(List(1,2,3,4,5)) == List(1,2,3,4))
+        assert(init(List(1, 2, 3, 4, 5)) == List(1, 2, 3, 4))
       }
 
       it("returns Nil in case of single-item list") {
