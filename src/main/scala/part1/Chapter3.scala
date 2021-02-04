@@ -1,10 +1,17 @@
 package part1
 
+import part1.Chapter3.List.foldLeft
+
 import scala.annotation.tailrec
 
 object Chapter3 {
 
-  sealed trait List[+A]
+  sealed trait List[+A] {
+    override def toString: String = {
+      val listOfStrings = List.map(this)(_.toString)
+      "[" + foldLeft(listOfStrings, "")(_ + "," + _) + "]"
+    }
+  }
 
   case object Nil extends List[Nothing]
 
@@ -21,6 +28,9 @@ object Chapter3 {
       case Cons(0.0, _) => 0.0
       case Cons(h, t)   => h * product(t)
     }
+
+    def apply(range: Range): List[Int] =
+      apply(range: _*)
 
     def apply[A](as: A*): List[A] = {
       @tailrec
@@ -70,6 +80,108 @@ object Chapter3 {
       case Cons(_, Nil)  => Nil
       case Cons(h, tail) => Cons(h, init(tail))
     }
+
+    def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
+      as match {
+        case Nil        => z
+        case Cons(h, t) => f(h, foldRight(t, z)(f))
+      }
+    }
+
+    def sum2(ns: List[Int]): Int = foldRight(ns, 0)(_ + _)
+
+    def product2(ns: List[Double]): Double = foldRight(ns, 1.0)(_ * _)
+
+    def length[A](as: List[A]): Int = foldRight(as, 0)((_, acc) => acc + 1)
+
+    @tailrec
+    def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B = as match {
+      case Nil        => z
+      case Cons(h, t) => foldLeft(t, f(z, h))(f)
+    }
+
+    def sum3(ns: List[Int]): Int = foldLeft(ns, 0)(_ + _)
+
+    def product3(ns: List[Double]): Double = foldLeft(ns, 1.0)(_ * _)
+
+    def length2[A](ns: List[A]): Int = foldLeft(ns, 0)((acc, _) => acc + 1)
+
+    def reverse[A](as: List[A]): List[A] = {
+      foldLeft(as, Nil: List[A])((acc, a) => Cons(a, acc))
+    }
+
+    def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+      foldLeft(as, (b: B) => b)((g, a) => b => g(f(a, b)))(z)
+
+    def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+      foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
+
+    def foldRightAppend[A](l: List[A], r: List[A]): List[A] =
+      foldRight(l, r)(Cons(_, _))
+
+    def foldLeftAppend[A](l: List[A], r: List[A]): List[A] =
+      foldLeft(List.reverse(l), r)((acc, a) => Cons(a, acc))
+
+    def concat[A](list: List[List[A]]): List[A] =
+      foldRight(list, Nil: List[A])(append)
+
+    def addOne(ns: List[Int]): List[Int] = ns match {
+      case Nil        => Nil
+      case Cons(h, t) => Cons(h + 1, addOne(t))
+    }
+
+    def doubleToString(ds: List[Double]): List[String] = ds match {
+      case Nil        => Nil
+      case Cons(h, t) => Cons(h.toString, doubleToString(t))
+    }
+
+    def map[A, B](l: List[A])(f: A => B): List[B] = l match {
+      case Nil        => Nil
+      case Cons(h, t) => Cons(f(h), map(t)(f))
+    }
+
+    def filter[A](as: List[A])(f: A => Boolean): List[A] = as match {
+      case Nil        => Nil
+      case Cons(h, t) =>
+        if (f(h))
+          Cons(h, filter(t)(f))
+        else
+          filter(t)(f)
+    }
+
+    def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as match {
+      case Nil        => Nil
+      case Cons(h, t) => append(f(h), flatMap(t)(f))
+    }
+
+    def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] =
+      flatMap(as)(a => if (f(a)) List(a) else Nil)
+
+    def addCorrespondingElements(l: List[Int], r: List[Int]): List[Int] = (l, r) match {
+      case (Cons(a, as), Cons(b, bs)) => Cons(a + b, addCorrespondingElements(as, bs))
+      case (Nil, Nil)                 => Nil
+    }
+
+    def zipWith[A, B](l: List[A], r: List[A])(f: (A, A) => B): List[B] = (l, r) match {
+      case (Cons(a, as), Cons(b, bs)) => Cons(f(a, b), zipWith(as, bs)(f))
+      case (Nil, Nil)                 => Nil
+    }
+
+    @tailrec
+    def startsWith[A](sup: List[A], sub: List[A]): Boolean = (sup, sub) match {
+      case (_, Nil) => true
+      case (Cons(a, as), Cons(b, bs)) if a == b => startsWith(as, bs)
+      case _ => false
+    }
+
+    @tailrec
+    def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = sup match {
+      case Nil => sub == Nil
+      case _ if startsWith(sup, sub) => true
+      case Cons(_, as) =>  hasSubsequence(as, sub)
+    }
+
   }
+
 
 }

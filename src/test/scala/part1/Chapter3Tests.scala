@@ -2,6 +2,8 @@ package part1
 
 import org.scalatest.funspec.AnyFunSpec
 
+import scala.math.BigDecimal.double2bigDecimal
+
 
 class Chapter3Tests extends AnyFunSpec {
 
@@ -84,6 +86,158 @@ class Chapter3Tests extends AnyFunSpec {
         assertThrows[UnsupportedOperationException](init(Nil))
       }
     }
+
+    describe("ex 3.7 short-circuiting product via foldRight") {
+      it("can't be short-circuited because foldRight doesn't contains only edge and recursion cases") {
+        assert(true)
+      }
+    }
+
+    describe("ex 3.8 foldRight with List constructors") {
+      it("does nothing, because list is simply reconstructed starting from last element") {
+        assert(List(1, 2, 3, 4, 5) == List.foldRight(List(1, 2, 3, 4, 5), Nil: List[Int])(Cons(_, _)))
+      }
+    }
+
+    describe("ex 3.9") {
+      it("computes the length of empty list as 0") {
+        assert(List.length(Nil) == 0)
+      }
+
+      it("computes the length of non empty list correctly") {
+        assert(List.length(List(1, 2, 3)) == 3)
+      }
+    }
+
+    describe("ex 3.10 evidence that foldRight is not stack-safe") {
+      it("throws stack overflow exception") {
+        val l = List(1 to 1000_000)
+
+        assertThrows[StackOverflowError](List.foldRight(l, 0)(_ + _))
+      }
+    }
+
+    describe("ex 3.11") {
+      it("sum results are the same") {
+        val list = List(1 to 100)
+        assert(List.sum2(list) == List.sum3(list))
+      }
+
+      it("product results are the same") {
+        val list = List(1 to 100)
+        assert(List.length(list) == List.length2(list))
+      }
+
+      it("length results are the same") {
+        val list = List(1.0, 2.0, 3.0, 4.0)
+        assert(List.product2(list) == List.product3(list))
+      }
+
+    }
+
+    describe("ex 3.12") {
+      it("foldLeft using List constructors is reverse") {
+        assert(List(1, 2, 3, 4, 5) == List.reverse(List(5, 4, 3, 2, 1)))
+      }
+    }
+
+    describe("ex 3.13") {
+      it("foldRightViaFoldLeft shouldn't reverse the list") {
+        val l = List(1 to 100)
+        assert(List.foldRightViaFoldLeft(l, Nil: List[Int])(Cons(_, _)) == l)
+      }
+
+      it("foldLeftViaFoldRight should reverse the list") {
+        val l = List(1 to 100)
+        assert(List.foldLeftViaFoldRight(l, Nil: List[Int])((acc, a) => Cons(a, acc)) == List.reverse(l))
+      }
+
+    }
+
+    describe("ex 3.14") {
+      it("appends via foldRight") {
+        assert(List.foldRightAppend(List(1 to 3), List(4 to 8)) == List(1 to 8))
+      }
+
+      describe("append via foldLeft reverses left list and appends right list to the end") {
+        it("appends via foldLeft") {
+          assert(List.foldLeftAppend(List(1 to 3), List(4 to 8)) == List(1 to 8))
+        }
+      }
+    }
+
+    describe("ex 3.15") {
+      it("joins list of lists into single list") {
+        val l = List(List(1, 2), List(3, 4), List(5, 6))
+        assert(List.concat(l) == List(1 to 6))
+      }
+    }
+
+    describe("ex 3.16") {
+      it("adds one to each element") {
+        assert(List(2 to 6) == List.addOne(List(1 to 5)))
+      }
+    }
+
+    describe("ex 3.17") {
+      it("converts list of double to list of string") {
+        val ds = List(1.0, 2.0, 2.2, 3.3, 4.4)
+        assert(List.doubleToString(ds) == List("1.0", "2.0", "2.2", "3.3", "4.4"))
+      }
+    }
+
+    describe("ex 3.18 map") {
+      it("should apply given function to each element in the list without changing it's structure") {
+        assert(List.map(List(1 to 10))(_ * 2) == List(2 to 20 by 2))
+      }
+    }
+
+    describe("ex 3.19 filter") {
+      it("should exclude elements using given predicate") {
+        assert(List.filter(List(1 to 10))(_ % 2 == 0) == List(2, 4, 6, 8, 10))
+      }
+    }
+
+    describe("ex 3.20 flatMap") {
+      it("should flatten nested lists") {
+        val l = List(List(1, 2), List(3, 4), List(5, 6))
+        assert(List.flatMap(l)(x => x) == List(1 to 6))
+      }
+
+      it("should join and flatten") {
+        val l = List(1, 2, 3)
+        assert(List.flatMap(l)(x => List(x, x)) == List(1, 1, 2, 2, 3, 3))
+      }
+    }
+
+    describe("ex 3.21 filterViaFlatMap should work just as filter") {
+      it("should exclude elements using given predicate") {
+        assert(List.filterViaFlatMap(List(1 to 10))(_ % 2 == 0) == List(2, 4, 6, 8, 10))
+      }
+    }
+
+    describe("ex 3.22") {
+      it("add corresponding list elements") {
+        assert(List.addCorrespondingElements(List(1,2,3), List(4,5,6)) == List(5,7,9))
+      }
+    }
+
+    describe("ex 3.22 zipWith") {
+      it("zips two lists into list of tuples") {
+        assert(List.zipWith(List(1,2,3), List(4,5,6))(_ -> _) == List(1 -> 4, 2 -> 5, 3 -> 6))
+      }
+    }
+
+    describe("ex 3.23 hasSubsequence") {
+      it("should return true for List(1,2,3,4) and List(2,3)") {
+        assert(List.hasSubsequence(List(1,2,3,4), List(2,3)))
+      }
+
+      it("should return false for List(1,2,3,4) and List(1,3)") {
+        assert(!List.hasSubsequence(List(1,2,3,4), List(1,3)))
+      }
+    }
+
   }
 
 }
