@@ -120,7 +120,7 @@ class Chapter3Tests extends AnyFunSpec {
     describe("ex 3.11") {
       it("sum results are the same") {
         val list = List(1 to 100)
-        assert(List.sum2(list) == List.sum3(list))
+        assert(Set(List.sum2(list), List.sum3(list), List.sum(list)).size == 1)
       }
 
       it("product results are the same") {
@@ -130,7 +130,7 @@ class Chapter3Tests extends AnyFunSpec {
 
       it("length results are the same") {
         val list = List(1.0, 2.0, 3.0, 4.0)
-        assert(List.product2(list) == List.product3(list))
+        assert(Set(List.product(list), List.product2(list), List.product3(list)).size == 1)
       }
 
     }

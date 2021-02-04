@@ -24,30 +24,24 @@ class Chapter2Tests extends AnyFunSpec {
     }
   }
 
-  describe("ex 2.3 curry can't be tested, compilation is enough") {
-    assertCompiles(
-      """
-        |  def curry[A, B, C](f: (A, B) => C): A => (B => C) =
-        |    a => b => f(a, b)
-        |
-          """.stripMargin)
+  describe("ex 2.3 curry") {
+    val f = (_: Int) + (_: Int)
+    it("shouldn't change the meaning of function") {
+      assert(curry(f)(4)(5) == f(4, 5))
+    }
   }
 
   describe("ex 2.4 uncurry can't be tested, compilation is enough") {
-    assertCompiles(
-      """
-        |  def uncurry[A, B, C](f: A => B => C): (A, B) => C =
-        |    (a, b) => f(a)(b)
-          """.stripMargin)
+    val f = (a: Int) =>  (b: Int) => a + b
+    it("shouldn't change the meaning of function") {
+      assert(uncurry(f)(4, 5) == f(4)(5))
+    }
   }
 
   describe("ex 2.5 compose") {
     it("compose(_ * 3)(_ + 1)(1) should be equal to 6 ") {
       assert(compose[Int, Int, Int](_ * 3, _ + 1)(1) == 6)
     }
-
-
   }
-
 
 }

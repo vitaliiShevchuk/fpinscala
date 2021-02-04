@@ -1,17 +1,10 @@
 package part1
 
-import part1.Chapter3.List.foldLeft
-
 import scala.annotation.tailrec
 
 object Chapter3 {
 
-  sealed trait List[+A] {
-    override def toString: String = {
-      val listOfStrings = List.map(this)(_.toString)
-      "[" + foldLeft(listOfStrings, "")(_ + "," + _) + "]"
-    }
-  }
+  sealed trait List[+A]
 
   case object Nil extends List[Nothing]
 
@@ -160,13 +153,11 @@ object Chapter3 {
     def addCorrespondingElements(l: List[Int], r: List[Int]): List[Int] = (l, r) match {
       case (Cons(a, as), Cons(b, bs)) => Cons(a + b, addCorrespondingElements(as, bs))
       case (Nil, Nil)                 => Nil
-      case _ => ???
     }
 
     def zipWith[A, B](l: List[A], r: List[A])(f: (A, A) => B): List[B] = (l, r) match {
       case (Cons(a, as), Cons(b, bs)) => Cons(f(a, b), zipWith(as, bs)(f))
       case (Nil, Nil)                 => Nil
-      case _ => ???
     }
 
     @tailrec
