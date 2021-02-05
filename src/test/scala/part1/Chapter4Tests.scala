@@ -81,6 +81,20 @@ class Chapter4Tests extends AnyFunSpec {
         assert(Option.traverse(list)(x => Option.Try(x.toInt)) == Some(List(1, 3, 5)))
       }
     }
+
+    describe("misc") {
+      it("lift must make 'f :: a b' 'f :: Option a b'") {
+        assert(Option.lift((_: Int) + 3)(Option(4)) == Option(7))
+      }
+
+      it("try must return None if function failed") {
+        assert(Option.Try(4 / 0) == None)
+      }
+
+      it("mean returns None if seq was empty") {
+        assert(Option.mean(Seq()) == None)
+      }
+    }
   }
 
 }
