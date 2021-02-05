@@ -3,8 +3,6 @@ package part1
 import org.scalatest.funspec.AnyFunSpec
 import part1.Chapter3.{Branch, Leaf}
 
-import scala.math.BigDecimal.double2bigDecimal
-
 
 class Chapter3Tests extends AnyFunSpec {
 
@@ -124,13 +122,18 @@ class Chapter3Tests extends AnyFunSpec {
       }
 
       it("product results are the same") {
-        val list = List(1 to 100)
-        assert(List.length(list) == List.length2(list))
+        val list = List(1.0, 2.0, 3.0, 4.0)
+        assert(Set(List.product(list), List.product2(list), List.product3(list)).size == 1)
+      }
+
+      it("product should be 0 in case when any element in list is 0") {
+        assert(List.product(List(1, 2, 3, 4, 0)) == 0)
       }
 
       it("length results are the same") {
-        val list = List(1.0, 2.0, 3.0, 4.0)
-        assert(Set(List.product(list), List.product2(list), List.product3(list)).size == 1)
+        val list = List(1 to 100)
+        assert(List.length(list) == List.length2(list))
+
       }
 
     }
