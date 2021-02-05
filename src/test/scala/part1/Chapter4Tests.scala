@@ -6,43 +6,45 @@ class Chapter4Tests extends AnyFunSpec {
 
   import Chapter4._
 
-  describe("Option ops ex 4.1") {
+  describe("Option ops") {
 
-    describe("map") {
-      it("should transform value using function f") {
-        assert(Option(42).map(_ * 2) == Option(84))
-      }
-    }
-
-    describe("getOrElse") {
-      it("should return provided value in case of None") {
-        assert(Option.empty[Int].getOrElse(55) == 55)
-      }
-    }
-
-    describe("orElse") {
-      it("should return provided option if none") {
-        assert(Option.empty[Int].orElse(Option(55)) == Option(55))
+    describe("ex 4.1") {
+      describe("map") {
+        it("should transform value using function f") {
+          assert(Option(42).map(_ * 2) == Option(84))
+        }
       }
 
-      it("should return itself if it's Some") {
-        assert(Option(42).orElse(Option(55)) == Option(42))
-      }
-    }
-
-    describe("filter") {
-      it("should return none if predicate returned false") {
-        assert(Option(100).filter(_ > 200) == None)
+      describe("getOrElse") {
+        it("should return provided value in case of None") {
+          assert(Option.empty[Int].getOrElse(55) == 55)
+        }
       }
 
-      it("filter should return itself if predicate returned false") {
-        assert(Option(100).filter(_ % 2 == 0) == Option(100))
-      }
-    }
+      describe("orElse") {
+        it("should return provided option if none") {
+          assert(Option.empty[Int].orElse(Option(55)) == Option(55))
+        }
 
-    describe("flatMap") {
-      it("should apply given function to value") {
-        assert(Option(42).flatMap(a => Some(a * 2)) == Some(84))
+        it("should return itself if it's Some") {
+          assert(Option(42).orElse(Option(55)) == Option(42))
+        }
+      }
+
+      describe("filter") {
+        it("should return none if predicate returned false") {
+          assert(Option(100).filter(_ > 200) == None)
+        }
+
+        it("filter should return itself if predicate returned false") {
+          assert(Option(100).filter(_ % 2 == 0) == Option(100))
+        }
+      }
+
+      describe("flatMap") {
+        it("should apply given function to value") {
+          assert(Option(42).flatMap(a => Some(a * 2)) == Some(84))
+        }
       }
     }
 
@@ -94,6 +96,69 @@ class Chapter4Tests extends AnyFunSpec {
       it("mean returns None if seq was empty") {
         assert(Option.mean(Seq()) == None)
       }
+    }
+  }
+
+  describe("Either ops") {
+
+    describe("ex 4.7") {
+
+      it("map should transform value inside either in case of Right") {
+        assert(Right(10).map(_ * 20) == Right(200))
+      }
+
+      it("map should not transform value inside either in case of Left") {
+        assert((Left("Error?"): Either[String, Int]).map(_ * 20) == Left("Error?"))
+      }
+
+      it("flatMap should apply f to value inside either in case of Right") {
+        assert(Right(10).flatMap(a => Right(a * 20)) == Right(200))
+      }
+
+      it("flatMap should apply f to value inside either in case of Left") {
+        assert((Left("Error?"): Either[String, Int]).flatMap(a => Right(a * 20)) == Left("Error?"))
+      }
+
+      it("orElse should return provided value on case of Left") {
+        assert(Left("Error?").orElse(Right(2)) == Right(2))
+      }
+
+      it("orElse should return Right's value on case of Right") {
+        assert(Right(4).orElse(Right(2)) == Right(4))
+      }
+
+      it("should lift Function2 to consume two either values") {
+        val f: (Int, Int) => Int = _ + _
+        assert(Right(42).map2(Right(2))(f) == Right(44))
+      }
+
+      describe("ex 4.8") {
+        describe("It's not possible because we need to combine `left` values, " +
+          "that's possible after changes to map, sequence... ") {
+
+        }
+      }
+    }
+
+    describe("misc") {
+
+      it("mean should return Left in case of empty List") {
+        assert(Either.mean(Seq()) == Left("mean of empty list!"))
+      }
+
+      it("mean should return Right in case of empty List") {
+        assert(Either.mean(Seq(5, 15)) == Right(10.0))
+      }
+
+      it("try over division by 0 should return exception in Left") {
+        assert(Either.Try(2 / 0).isInstanceOf[Left[_]])
+      }
+
+      it("try should return value in Right") {
+        assert(Either.Try(2 / 1) == Right(2))
+      }
+
+
     }
   }
 
