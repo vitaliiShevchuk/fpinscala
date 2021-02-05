@@ -85,6 +85,10 @@ class Chapter4Tests extends AnyFunSpec {
     }
 
     describe("misc") {
+      it("Option.apply must return None in case of null") {
+        assert(Option[String](null) == None)
+      }
+
       it("lift must make 'f :: a b' 'f :: Option a b'") {
         assert(Option.lift((_: Int) + 3)(Option(4)) == Option(7))
       }
@@ -132,10 +136,19 @@ class Chapter4Tests extends AnyFunSpec {
         assert(Right(42).map2(Right(2))(f) == Right(44))
       }
 
+      it("sequence must transform List[Either] to Either[E, List]") {
+        val list = List(Right(42), Right(22))
+        assert(Either.sequence(list) == Right(List(42, 22)))
+      }
+
+      it("traverse must transform List[A] using A => Either to Either[E, List]") {
+        val list = List("1","2","3","4","5")
+        assert(Either.traverse(list)(a => Either.Try(a.toInt)) == Right(List(1,2,3,4,5)))
+      }
+
       describe("ex 4.8") {
         describe("It's not possible because we need to combine `left` values, " +
           "that's possible after changes to map, sequence... ") {
-
         }
       }
     }
