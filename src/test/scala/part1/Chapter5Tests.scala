@@ -1,6 +1,7 @@
 package part1
 
 import org.scalatest.funspec.AnyFunSpec
+import sun.nio.cs.ext.DoubleByte.Decoder_EUC_SIM
 
 class Chapter5Tests extends AnyFunSpec {
 
@@ -202,9 +203,18 @@ class Chapter5Tests extends AnyFunSpec {
 
     describe("ex 5.14") {
       describe("startsWith") {
-        it("must return true if s2 is prefix of s1") {
-          assert(Stream(1,2,3,4) startsWith Stream(2,3))
+        it("must return false if s2 is prefix of s1") {
+          assert(!Stream(1,2,3,4).startsWith(Stream(2,3)))
         }
+
+        it("must return true if s2 eq s1") {
+          assert(Stream(1,2,3,4).startsWith(Stream(1,2,3,4)))
+        }
+
+        it("must return false if s2 is empty") {
+          assert(!Stream(1,2,3,4).startsWith(Stream.empty))
+        }
+
       }
     }
 
@@ -221,14 +231,31 @@ class Chapter5Tests extends AnyFunSpec {
         assert(Stream(1,2,3,4).hasSubsequence(Stream(3,4)))
       }
 
+      it("hasSubsequence non matching") {
+        assert(!Stream(1,2,3,4).hasSubsequence(Stream(4, 5)))
+      }
+
       it("hasSubsequence2") {
         assert(Stream(1,2,3,4).hasSubsequence2(Stream(3,4)))
       }
+
+      it("hasSubsequence2 non matching") {
+        assert(!Stream(1,2,3,4).hasSubsequence2(Stream(4, 5)))
+      }
+
     }
 
     describe("scanRight") {
       it("returns stream of intermediate results") {
         assert(Stream(1, 2, 3).scanRight(0)(_ + _).toList == List(6, 5, 3, 0))
+      }
+    }
+
+    describe("misc") {
+      describe("zip") {
+        it("must zip and trim to same length") {
+          assert(Stream(1,2,3,4).zip(Stream(1,2)).toList == List(1,2,3,4).zip(List(1,2)))
+        }
       }
     }
   }
