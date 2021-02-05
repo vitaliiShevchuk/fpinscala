@@ -1,7 +1,6 @@
 package part1
 
 import org.scalatest.funspec.AnyFunSpec
-import sun.nio.cs.ext.DoubleByte.Decoder_EUC_SIM
 
 class Chapter5Tests extends AnyFunSpec {
 
