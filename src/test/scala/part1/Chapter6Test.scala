@@ -84,8 +84,8 @@ class Chapter6Test extends AnyFunSpec {
 
     describe("ex 6.6") {
       it("must return double using map") {
-        val (d, _) = double2(StubRng(3))
-        assert(d == 3.0)
+        val (d, _) = double2(StubRng(500000000))
+        assert(d ~= 0.23283064)
       }
 
       it("must return non negative even int") {
