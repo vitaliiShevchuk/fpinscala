@@ -56,14 +56,9 @@ object Chapter6 {
 
   type Rand[+A] = RNG => (A, RNG)
 
-  val int: Rand[Int] = _.nextInt
-
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
-  val double2: Rand[Double] = map(nonNegativeInt) {
-    case i if i == Int.MaxValue => i - 1 / Int.MaxValue
-    case i                      => i
-  }
+  val double2: Rand[Double] = map(nonNegativeInt) {_ / (Int.MaxValue.toDouble + 1)}
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 

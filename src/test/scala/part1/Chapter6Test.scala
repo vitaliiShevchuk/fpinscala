@@ -77,8 +77,8 @@ class Chapter6Test extends AnyFunSpec {
 
     describe("ex 6.5") {
       it("must return double using map") {
-        val (d, _) = double2(StubRng(3))
-        assert(d == 3.0)
+        val (d, _) = double2(StubRng(Int.MaxValue))
+        assert(d ~= 0.999999999)
       }
     }
 
