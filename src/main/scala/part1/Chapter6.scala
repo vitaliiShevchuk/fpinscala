@@ -74,9 +74,9 @@ object Chapter6 {
   }
 
   def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = rng => {
-    val (a: A, rng2: RNG) = f(rng)
-    val randB: Rand[B] = g(a)
-    val (b: B, rng3) = randB(rng2)
+    val (a, rng2) = f(rng)
+    val randB = g(a)
+    val (b, rng3) = randB(rng2)
     (b, rng3)
   }
 
@@ -147,7 +147,7 @@ object Chapter6 {
     case class Machine(locked: Boolean, candies: Int, coins: Int)
 
     def action(input: Input): Machine => Machine = st =>
-      (input, st) match {
+      ((input, st): @unchecked) match {
         case (_, Machine(_, 0, _))                              => st
         case (Coin, Machine(false, _, _))                       => st
         case (Turn, Machine(true, _, _))                        => st

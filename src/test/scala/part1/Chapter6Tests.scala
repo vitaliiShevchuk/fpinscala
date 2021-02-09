@@ -4,7 +4,7 @@ import org.scalatest.funspec.AnyFunSpec
 import part1.Chapter6._
 import Utils._
 
-class Chapter6Test extends AnyFunSpec {
+class Chapter6Tests extends AnyFunSpec {
 
   describe("Rand ops") {
     import Utils.DoubleOps
