@@ -42,7 +42,7 @@ object Chapter7 {
           case None        =>
             val start = System.nanoTime
             val ar = a.get(timeoutInNanos, TimeUnit.NANOSECONDS)
-            val stop = System.nanoTime;
+            val stop = System.nanoTime
             val aTime = stop - start
 
             val br = b.get(timeoutInNanos - aTime, TimeUnit.NANOSECONDS)
@@ -94,6 +94,9 @@ object Chapter7 {
         a(es).get()(es)
 
       def run[A](s: ExecutorService)(a: Par[A]): Future[A] = a(s)
+
+      def equal[A](p: Par[A], p2: Par[A]): Par[Boolean] =
+        Par.map2(p, p2)(_ == _)
     }
 
 
@@ -145,6 +148,9 @@ object Chapter7 {
     def fork[A](a: => Par[A]): Par[A] = es => new Future[A] {
       def apply(cb: A => Unit): Unit = eval(es)(a(es)(cb))
     }
+
+    def equal[A](p: Par[A], p2: Par[A]): Par[Boolean] =
+      map2(p, p2)(_ == _)
 
     def map2[A, B, C](pa: Par[A], pb: Par[B])(f: (A, B) => C): Par[C] = es => new Future[C] {
       def apply(cb: C => Unit): Unit = {

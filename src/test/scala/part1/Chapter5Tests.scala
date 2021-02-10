@@ -152,13 +152,13 @@ class Chapter5Tests extends AnyFunSpec {
 
     describe("ex 5.9") {
       describe("from") {
-        it("must emit inf stream strating from 3") {
+        it("must emit inf stream starting from 3") {
           assert(Stream.from(3).take(1000).toList == List(3 to 1002: _*))
         }
       }
 
       describe("ex 5.12") {
-        it("must emit inf stream strating from 3") {
+        it("must emit inf stream starting from 3") {
           assert(Stream.from2(3).take(1000).toList == List(3 to 1002: _*))
         }
       }
