@@ -189,7 +189,6 @@ class Chapter6Tests extends AnyFunSpec {
 
       describe("get") {
         it("must return state as value inside") {
-          val value = State.unit[Int, Int](55)
           assert(State.get.run(55) == (55, 55))
         }
       }
