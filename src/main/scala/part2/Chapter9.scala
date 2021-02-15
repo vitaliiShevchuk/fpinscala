@@ -72,7 +72,7 @@ object Chapter9 {
     def advanceBy(n: Int): Location = copy(offset = offset + n)
 
     def currentLine: String =
-      if (input.length > 1) input.lines.drop(line - 1).next
+      if (input.length > 1) input.linesIterator.drop(line - 1).next
       else ""
 
     def columnCaret: String = (" " * (col - 1)) + "^"
