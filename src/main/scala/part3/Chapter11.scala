@@ -4,6 +4,7 @@ import part1.Chapter6.State
 import part2.Chapter7.NonBlocking
 import part2.Chapter7.NonBlocking.Par
 import part2.Chapter8.Gen
+import part3.Chapter12.Applicative
 
 object Chapter11 {
 
@@ -20,25 +21,21 @@ object Chapter11 {
 
   }
 
-  trait Monad[F[_]] {
-    def unit[A](a: => A): F[A]
-
+  trait Monad[F[_]] extends Applicative[F]{
     def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
-
-    def map[A, B](fa: F[A])(fab: A => B): F[B] = flatMap(fa)(a => unit(fab(a)))
 
     def map2[A, B, C](fa: F[A], fb: F[B])(fab: (A, B) => C): F[C] = flatMap(fa)(a => map(fb)(b => fab(a, b)))
 
-    def sequence[A](lma: List[F[A]]): F[List[A]] =
+    override def sequence[A](lma: List[F[A]]): F[List[A]] =
       lma.foldRight(unit(List.empty[A]))((fa, acc) => flatMap(fa)(a => map(acc)(a :: _)))
 
-    def traverse[A, B](la: List[A])(f: A => F[B]): F[List[B]] =
+    override def traverse[A, B](la: List[A])(f: A => F[B]): F[List[B]] =
       la.foldRight(unit(List.empty[B]))((a, acc) => flatMap(f(a))(b => map(acc)(l => b :: l)))
 
-    def replicateM[A](n: Int, ma: F[A]): F[List[A]] =
+    override def replicateM[A](n: Int, ma: F[A]): F[List[A]] =
       sequence(List.fill(n)(ma))
 
-    def product[A, B](ma: F[A], mb: F[B]): F[(A, B)] = map2(ma, mb)((_, _))
+    override def product[A, B](ma: F[A], mb: F[B]): F[(A, B)] = map2(ma, mb)((_, _))
 
     def filterM[A](ms: List[A])(f: A => F[Boolean]): F[List[A]] =
       ms.foldRight(unit(List.empty[A]))((a, acc) => flatMap(f(a))(b => map(acc)(l => if (b) a :: l else l)))
